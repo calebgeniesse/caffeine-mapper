@@ -175,11 +175,11 @@ def load_scrubbed(**kwargs):
     # return dataset as Bunch
     if kwargs.get('merge') is False:
         for i, session in enumerate(dataset):
-            session.meta = (clean_meta(session.meta, **kwargs)
+            meta = (clean_meta(session.meta, **kwargs)
                             .reset_index(drop=False)
                             )
-            dataset[i].meta = session.meta.copy()
-            dataset[i].y = session.meta.set_index('session').values
+            dataset[i].meta = meta.set_index(['session', 'tr_id']).copy()
+            dataset[i].y = meta.set_index('session').values.copy()
         return dataset
 
     # nerge data into single dataframe, array, etc
