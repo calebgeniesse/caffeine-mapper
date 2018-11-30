@@ -28,7 +28,7 @@ class config:
     # define some paths
     data_dir = 'data/base/'
     data_scrubbed_dir = os.path.join(data_dir, 'combined_data_scrubbed')
-
+    data_behavior_dir = os.path.join(data_dir, 'behavior')
 
   
 
@@ -61,6 +61,10 @@ def load_scrubbed(**kwargs):
     glob_str = os.path.join(config.data_scrubbed_dir, "sub???.txt")
     data_paths = sorted(glob.glob(glob_str))
 
+    glob_str = os.path.join(
+        config.data_behavior_dir, 'trackingdata_goodscans.txt')
+    meta_paths = sorted(glob.glob(glob_str))
+
     # hacky, but just print command to fetch data, if not already
     if len(data_paths) < 1:
         fetch_data()
@@ -74,6 +78,7 @@ def load_scrubbed(**kwargs):
     
     # check sizes
     logger.debug('found {} data files'.format(len(data_paths)))
+    logger.debug('found {} meta files'.format(len(meta_paths)))
     logger.debug('using {} sessions'.format(n_sessions))
 
     # load data ?
@@ -93,10 +98,15 @@ def load_scrubbed(**kwargs):
         df_meta = df_data.assign(tr_id = df_data.index.values)[['tr_id']]
         
         # parse session, session_id from file
-        session = os.path.basename(data_path)
+        session = os.path.basename(data_path).split('.txt')[0]
         session_id = int(''.join([__ for __ in session if __.isdigit()]))
         df_meta = df_meta.assign(session=session, session_id=session_id)
-
+        
+        # join with other meta files
+        df_meta = df_meta.join(
+            pd.concat(pd.read_table(_,index_col='subcode') for _ in meta_paths)
+            , how='left', on='session'
+            )
 
         #masker = NiftiLabelsMasker(
         #    labels_img=atlas_paths[0],
