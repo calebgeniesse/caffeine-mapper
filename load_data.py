@@ -51,6 +51,42 @@ def fetch_data(**kwargs):
 
 
 
+
+def clean_meta(df, columns=None, zscore=False, **kwargs):
+    """ Clean meta DataFrame, zscore.
+    """
+    # copy input df
+    df_clean = df.copy()
+    
+    # select columns
+    if columns is not None:
+        df_clean = df_clean[columns]
+    
+    # replace non-numerics
+    df_clean = df_clean.replace('.', 0.0)
+    df_numeric = df_clean.astype(str).applymap(str.isnumeric)
+    df_clean[df_numeric==False] = np.nan
+    df_clean = df_clean.fillna(0.0)
+
+    # only keep numeric data, convert to float
+    df_clean = df_clean.astype(float)
+    
+    # z-score values
+    if zscore is True:
+        from scipy.stats import zscore
+        good_rows = df_clean.any(axis=1)
+        good_cols = df_clean.any(axis=0)
+        df_nonzero = df_clean.loc[good_rows, good_cols]
+        df_clean.loc[good_rows, good_cols] = zscore(df_nonzero, axis=0)
+    
+    # fill nans
+    df_clean = df_clean.fillna(0.0)
+    
+    # return cleaned
+    return df_clean
+
+
+
 def load_scrubbed(**kwargs):
     """ Loads scrubbed data
     """
@@ -107,6 +143,10 @@ def load_scrubbed(**kwargs):
             pd.concat(pd.read_table(_,index_col='subcode') for _ in meta_paths)
             , how='left', on='session'
             )
+        df_meta = df_meta.set_index(['session', 'session_id', 'tr_id'])
+        
+        # clean meta
+        #df_meta = clean_meta(df_meta, **kwargs)
 
         #masker = NiftiLabelsMasker(
         #    labels_img=atlas_paths[0],
@@ -124,7 +164,7 @@ def load_scrubbed(**kwargs):
         # save masker, x
         dataset.append(Bunch(
             data=df_data.copy().fillna(0.0),
-            meta=df_meta.copy().fillna(-1),
+            meta=df_meta.copy().fillna(0),
 
             #masker=masker,
             X=df_data.values.copy(),
@@ -134,15 +174,25 @@ def load_scrubbed(**kwargs):
     
     # return dataset as Bunch
     if kwargs.get('merge') is False:
+        for i, session in enumerate(dataset):
+            session.meta = (clean_meta(session.meta, **kwargs)
+                            .reset_index(drop=False)
+                            )
+            dataset[i].meta = session.meta.copy()
+            dataset[i].y = session.meta.set_index('session').values
         return dataset
 
     # nerge data into single dataframe, array, etc
     dataset = Bunch(
         data=pd.concat((_.data for _ in dataset), ignore_index=True, sort=False).fillna(0.0),
-        meta=pd.concat((_.meta for _ in dataset), ignore_index=True, sort=False).fillna(-1),
-        #masker=[_.masker for _ in dataset][0],
-        #atlas=[_.atlas for _ in dataset][0]
+        meta=pd.concat((_.meta for _ in dataset), ignore_index=False, sort=False),
+        #atlas=[_.atlas for _ in dataset][0],
         )
+    dataset.meta = (clean_meta(dataset.meta, **kwargs)
+                    .reset_index(drop=False)
+                    .set_index('session')
+                    )
+
     dataset.X = dataset.data.values.reshape(-1, dataset.data.shape[-1])
     dataset.y = dataset.meta.values.reshape(-1, dataset.meta.shape[-1])
     return dataset
