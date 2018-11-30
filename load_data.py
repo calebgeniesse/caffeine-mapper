@@ -178,7 +178,7 @@ def load_scrubbed(**kwargs):
             meta = (clean_meta(session.meta, **kwargs)
                             .reset_index(drop=False)
                             )
-            dataset[i].meta = meta.set_index(['session', 'tr_id']).copy()
+            dataset[i].meta = meta.copy()
             dataset[i].y = meta.set_index('session').values.copy()
         return dataset
 
