@@ -29,7 +29,9 @@ class config:
     data_dir = 'data/base/'
     data_scrubbed_dir = os.path.join(data_dir, 'combined_data_scrubbed')
     data_behavior_dir = os.path.join(data_dir, 'behavior')
+    data_parcel_dir = os.path.join(data_dir, 'parcellation')
 
+ 
   
 
 def fetch_data(**kwargs):
@@ -87,6 +89,38 @@ def clean_meta(df, columns=None, zscore=False, **kwargs):
 
 
 
+def load_atlas(atlas_file=None):
+    """ Load parcellation / atlas data.
+    """ 
+    if atlas_file is None:
+        atlas_file = os.path.join(config.data_parcel_dir, "parcel_data.txt")
+    
+    # load parcellation into DataFrame
+    df_parcel = pd.read_table(atlas_file, header=None)
+
+    # relabel columns
+    df_parcel = df_parcel.iloc[:, [0,2,3,4,5,7]]
+    df_parcel.columns = ['target','x','y','z','label','network']
+
+    # region_coords: (x, y, z)
+    df_coords = df_parcel[['x', 'y', 'z']]
+
+    # labels: string list of region labels
+    df_labels = df_parcel[['label']]
+
+    # networks: names of the networks
+    df_networks = df_parcel[['network']]
+    
+    # Bunch
+    atlas = Bunch(
+        labels=df_labels,
+        region_coords=df_coords,
+        networks=df_networks,
+        )
+    return atlas
+
+
+
 def load_scrubbed(**kwargs):
     """ Loads scrubbed data
     """
@@ -111,7 +145,6 @@ def load_scrubbed(**kwargs):
     if n_sessions == -1:
         n_sessions = len(data_paths)
 
-    
     # check sizes
     logger.debug('found {} data files'.format(len(data_paths)))
     logger.debug('found {} meta files'.format(len(meta_paths)))
@@ -160,7 +193,9 @@ def load_scrubbed(**kwargs):
         #    )
         #df_data.iloc[:, :] = cleaned_
 
-
+        # load atlas
+        atlas = load_atlas()
+        
         # save masker, x
         dataset.append(Bunch(
             data=df_data.copy().fillna(0.0),
@@ -168,7 +203,10 @@ def load_scrubbed(**kwargs):
 
             #masker=masker,
             X=df_data.values.copy(),
-            y=df_meta.values.copy()
+            y=df_meta.values.copy(),
+            
+            # atlas
+            atlas=atlas,
             ))
     
     
@@ -186,7 +224,7 @@ def load_scrubbed(**kwargs):
     dataset = Bunch(
         data=pd.concat((_.data for _ in dataset), ignore_index=True, sort=False).fillna(0.0),
         meta=pd.concat((_.meta for _ in dataset), ignore_index=False, sort=False),
-        #atlas=[_.atlas for _ in dataset][0],
+        atlas=dataset[0].atlas,
         )
     dataset.meta = (clean_meta(dataset.meta, **kwargs)
                     .reset_index(drop=False)
