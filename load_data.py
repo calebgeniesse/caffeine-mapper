@@ -28,8 +28,10 @@ class config:
     # define some paths
     data_dir = 'data/base/'
     data_scrubbed_dir = os.path.join(data_dir, 'combined_data_scrubbed')
+    data_behavior_dir = os.path.join(data_dir, 'behavior')
+    data_parcel_dir = os.path.join(data_dir, 'parcellation')
 
-
+ 
   
 
 def fetch_data(**kwargs):
@@ -51,6 +53,74 @@ def fetch_data(**kwargs):
 
 
 
+
+def clean_meta(df, columns=None, zscore=False, **kwargs):
+    """ Clean meta DataFrame, zscore.
+    """
+    # copy input df
+    df_clean = df.copy()
+    
+    # select columns
+    if columns is not None:
+        df_clean = df_clean[columns]
+    
+    # replace non-numerics
+    df_clean = df_clean.replace('.', 0.0)
+    df_numeric = df_clean.astype(str).applymap(str.isnumeric)
+    df_clean[df_numeric==False] = np.nan
+    df_clean = df_clean.fillna(0.0)
+
+    # only keep numeric data, convert to float
+    df_clean = df_clean.astype(float)
+    
+    # z-score values
+    if zscore is True:
+        from scipy.stats import zscore
+        good_rows = df_clean.any(axis=1)
+        good_cols = df_clean.any(axis=0)
+        df_nonzero = df_clean.loc[good_rows, good_cols]
+        df_clean.loc[good_rows, good_cols] = zscore(df_nonzero, axis=0)
+    
+    # fill nans
+    df_clean = df_clean.fillna(0.0)
+    
+    # return cleaned
+    return df_clean
+
+
+
+def load_atlas(atlas_file=None):
+    """ Load parcellation / atlas data.
+    """ 
+    if atlas_file is None:
+        atlas_file = os.path.join(config.data_parcel_dir, "parcel_data.txt")
+    
+    # load parcellation into DataFrame
+    df_parcel = pd.read_table(atlas_file, header=None)
+
+    # relabel columns
+    df_parcel = df_parcel.iloc[:, [0,2,3,4,5,7]]
+    df_parcel.columns = ['target','x','y','z','label','network']
+
+    # region_coords: (x, y, z)
+    df_coords = df_parcel[['x', 'y', 'z']]
+
+    # labels: string list of region labels
+    df_labels = df_parcel[['label']]
+
+    # networks: names of the networks
+    df_networks = df_parcel[['network']]
+    
+    # Bunch
+    atlas = Bunch(
+        labels=df_labels,
+        region_coords=df_coords,
+        networks=df_networks,
+        )
+    return atlas
+
+
+
 def load_scrubbed(**kwargs):
     """ Loads scrubbed data
     """
@@ -60,6 +130,10 @@ def load_scrubbed(**kwargs):
     # file path (avmovie only, for now)
     glob_str = os.path.join(config.data_scrubbed_dir, "sub???.txt")
     data_paths = sorted(glob.glob(glob_str))
+
+    glob_str = os.path.join(
+        config.data_behavior_dir, 'trackingdata_goodscans.txt')
+    meta_paths = sorted(glob.glob(glob_str))
 
     # hacky, but just print command to fetch data, if not already
     if len(data_paths) < 1:
@@ -71,9 +145,9 @@ def load_scrubbed(**kwargs):
     if n_sessions == -1:
         n_sessions = len(data_paths)
 
-    
     # check sizes
     logger.debug('found {} data files'.format(len(data_paths)))
+    logger.debug('found {} meta files'.format(len(meta_paths)))
     logger.debug('using {} sessions'.format(n_sessions))
 
     # load data ?
@@ -93,10 +167,19 @@ def load_scrubbed(**kwargs):
         df_meta = df_data.assign(tr_id = df_data.index.values)[['tr_id']]
         
         # parse session, session_id from file
-        session = os.path.basename(data_path)
+        session = os.path.basename(data_path).split('.txt')[0]
         session_id = int(''.join([__ for __ in session if __.isdigit()]))
         df_meta = df_meta.assign(session=session, session_id=session_id)
-
+        
+        # join with other meta files
+        df_meta = df_meta.join(
+            pd.concat(pd.read_table(_,index_col='subcode') for _ in meta_paths)
+            , how='left', on='session'
+            )
+        df_meta = df_meta.set_index(['session', 'session_id', 'tr_id'])
+        
+        # clean meta
+        #df_meta = clean_meta(df_meta, **kwargs)
 
         #masker = NiftiLabelsMasker(
         #    labels_img=atlas_paths[0],
@@ -110,29 +193,44 @@ def load_scrubbed(**kwargs):
         #    )
         #df_data.iloc[:, :] = cleaned_
 
-
+        # load atlas
+        atlas = load_atlas()
+        
         # save masker, x
         dataset.append(Bunch(
             data=df_data.copy().fillna(0.0),
-            meta=df_meta.copy().fillna(-1),
+            meta=df_meta.copy().fillna(0),
 
             #masker=masker,
             X=df_data.values.copy(),
-            y=df_meta.values.copy()
+            y=df_meta.values.copy(),
+            
+            # atlas
+            atlas=atlas,
             ))
     
     
     # return dataset as Bunch
     if kwargs.get('merge') is False:
+        for i, session in enumerate(dataset):
+            meta = (clean_meta(session.meta, **kwargs)
+                            .reset_index(drop=False)
+                            )
+            dataset[i].meta = meta.copy()
+            dataset[i].y = meta.set_index('session').values.copy()
         return dataset
 
     # nerge data into single dataframe, array, etc
     dataset = Bunch(
         data=pd.concat((_.data for _ in dataset), ignore_index=True, sort=False).fillna(0.0),
-        meta=pd.concat((_.meta for _ in dataset), ignore_index=True, sort=False).fillna(-1),
-        #masker=[_.masker for _ in dataset][0],
-        #atlas=[_.atlas for _ in dataset][0]
+        meta=pd.concat((_.meta for _ in dataset), ignore_index=False, sort=False),
+        atlas=dataset[0].atlas,
         )
+    dataset.meta = (clean_meta(dataset.meta, **kwargs)
+                    .reset_index(drop=False)
+                    .set_index('session')
+                    )
+
     dataset.X = dataset.data.values.reshape(-1, dataset.data.shape[-1])
     dataset.y = dataset.meta.values.reshape(-1, dataset.meta.shape[-1])
     return dataset
