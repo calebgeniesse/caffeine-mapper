@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 
 import kmapper as km
 import networkx as nx
+import dyneusr as ds
 
 import numpy as np
 import pandas as pd
@@ -30,6 +31,7 @@ from collections import Counter, OrderedDict
 from functools import partial
 from itertools import product
 
+from load_data import load_scrubbed
 
 
 ##############################################################################
@@ -134,7 +136,7 @@ def run_mapper(X=None, y=None, X_inverse=True, lens=None, verbose=0, **params):
         X=X.copy(), X_inverse=X, 
         lens=lens.copy(), graph=graph, 
         params=params, cover=cover,
-        dG=dG,
+        dG=dG, G=dG.G_
     )
     return results
     
