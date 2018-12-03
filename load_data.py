@@ -99,21 +99,31 @@ def load_atlas(atlas_file=None):
     df_parcel = pd.read_table(atlas_file, header=None)
 
     # relabel columns
-    df_parcel = df_parcel.iloc[:, [0,2,3,4,5,7]]
-    df_parcel.columns = ['target','x','y','z','label','network']
+    df_parcel = df_parcel.rename(
+        columns={
+            0:'target',
+            1:'hemisphere',
+            2:'x',
+            3:'y',
+            4:'z',
+            5:'region',
+            6:'subregion',
+            7:'network'
+        })
 
     # region_coords: (x, y, z)
-    df_coords = df_parcel[['x', 'y', 'z']]
+    df_coords = df_parcel[['x', 'y', 'z']].copy()
 
-    # labels: string list of region labels
-    df_labels = df_parcel[['label']]
+    # regions: string list of region labels
+    df_regions = df_parcel[['region']].copy()
 
     # networks: names of the networks
-    df_networks = df_parcel[['network']]
+    df_networks = df_parcel[['network']].copy()
     
     # Bunch
     atlas = Bunch(
-        labels=df_labels,
+        data=df_parcel,
+        regions=df_regions,
         region_coords=df_coords,
         networks=df_networks,
         )
