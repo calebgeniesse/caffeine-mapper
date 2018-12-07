@@ -63,8 +63,8 @@ def get_data_splits(data_, zscore=True, groupby='day_of_week', groups=None, **kw
         x_group = x_[df_group.index, :]
 
         # extract RSNs data for fed / fasted
-        df_rsn_group = get_RSN_act(x_group, data_.rmask, density=0.05)
-        
+        df_rsn_group = get_RSN_act(x_group, data_.rmask, **kwargs)
+
         # name split
         try:
             name = '{:}_{:}'.format(groupby, str(g_i).zfill(len(str(grouped.ngroups))))
@@ -92,7 +92,7 @@ def get_data_splits(data_, zscore=True, groupby='day_of_week', groups=None, **kw
 
 
 
-def get_RSN_act(x, rsn, zscore=True, density=None, threshold=0.5, binary=True):
+def get_RSN_act(x, rsn, zscore=True, density=None, threshold=0.05, binary=True):
     """ Compute mean activity for RSN at each TR.
     
     Inputs
