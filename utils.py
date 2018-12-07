@@ -31,7 +31,7 @@ from collections import Counter, OrderedDict
 from functools import partial
 from itertools import product
 
-from load_data import load_scrubbed
+from load_data import load_scrubbed, get_session_tmask, get_RSN_rmask
 
 
 ##############################################################################
