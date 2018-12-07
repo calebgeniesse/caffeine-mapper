@@ -222,9 +222,6 @@ def load_scrubbed(**kwargs):
     if len(data_paths) < 1:
         fetch_data()
         return None
-
-    # load atlas
-    atlas = load_atlas()
     
     # how many sessions to load?
     n_sessions = kwargs.get('n_sessions', -1)
@@ -264,7 +261,12 @@ def load_scrubbed(**kwargs):
             , how='left', on='session'
             )
            
-         # load tmask (subject specific)
+
+        # load atlas
+        atlas = load_atlas()
+
+
+        # load tmask (subject specific)
         df_tmask = get_session_tmask(df_meta, session=session, **kwargs.get('tmask_kwds', {}))
         if kwargs.get('apply_tmask'):
             df_data = df_data.loc[df_tmask.data_id, :]

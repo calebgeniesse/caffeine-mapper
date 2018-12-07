@@ -37,17 +37,26 @@ from load_data import load_scrubbed, get_session_tmask, get_RSN_rmask
 ##############################################################################
 ### helper functions
 ##############################################################################
-def get_RSN_act(x, atlas, threshold=0.5, zscore=True):
+def get_RSN_act(x, rsn, threshold=0.5, zscore=True):
     """ Compute mean activity for RSN at each TR.
     
     Inputs
     ------
         :x = np.ndarray (TR, ROI)
         
-        :atlas = pd.DataFrame.networks = (ROI, RSN)
+        :rsn = (ROI, RSN)
         
     """
     x_ = x.copy() 
+    rsn_ = rsn.copy()
+    if 'networks' in rsn_:
+        rsn_ = dict(rsn_).get('networks')
+    if isinstance(rsn_, pd.Series):
+    	rsn_ = rsn_.to_frame()
+
+    # reset indices (i.e. if rmask was applied to data...)
+    if rsn_.shape[0] > x_.shape[-1]:
+        rsn_ = rsn_.reset_index(drop=True)
     
     # z-score (?)
     if zscore is True:
@@ -55,7 +64,7 @@ def get_RSN_act(x, atlas, threshold=0.5, zscore=True):
 
     # get average RSN activity for each network
     # TODO: this could be its own function
-    rsn_rois = atlas.networks.groupby('network').indices.items()
+    rsn_rois = rsn_.groupby('network').indices.items()
     rsn_act = {rsn: x_[:, rois].mean(axis=1) for (rsn, rois) in rsn_rois}
 
     # save as DataFrame
