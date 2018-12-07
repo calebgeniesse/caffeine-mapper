@@ -52,7 +52,7 @@ def get_RSN_act(x, rsn, threshold=0.5, zscore=True):
     if 'networks' in rsn_:
         rsn_ = dict(rsn_).get('networks')
     if isinstance(rsn_, pd.Series):
-    	rsn_ = rsn_.to_frame()
+        rsn_ = rsn_.to_frame()
 
     # reset indices (i.e. if rmask was applied to data...)
     if rsn_.shape[0] > x_.shape[-1]:
@@ -145,7 +145,7 @@ def run_mapper(X=None, y=None, X_inverse=True, lens=None, verbose=0, **params):
         X=X.copy(), X_inverse=X, 
         lens=lens.copy(), graph=graph, 
         params=params, cover=cover,
-        dG=dG, G=dG.G_
+        dG=dG, G=dG.G_, TCM=dG.tcm_.copy()
     )
     return results
     
