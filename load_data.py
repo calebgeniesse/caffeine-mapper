@@ -265,17 +265,15 @@ def load_scrubbed(**kwargs):
             )
            
          # load tmask (subject specific)
-        logging.debug("      tmask: {}".format(kwargs.get('tmask')))
         df_tmask = get_session_tmask(df_meta, session=session, **kwargs.get('tmask_kwds', {}))
-        if kwargs.get('tmask'):
+        if kwargs.get('apply_tmask'):
             df_data = df_data.loc[df_tmask.data_id, :]
             df_meta = df_meta.loc[df_tmask.data_id, :]
             logging.info("      keeping: {} (time points)".format(df_data.shape[0]))
 
         # load rmask (region specific)
-        logging.debug("      rmask: {}".format(kwargs.get('rmask')))
         df_rmask = get_RSN_rmask(atlas, **kwargs.get('rmask_kwds', {}))
-        if kwargs.get('rmask'):
+        if kwargs.get('apply_rmask'):
             df_data = df_data.loc[:, df_rmask.data_id]
             logging.info("      keeping: {} (regions)".format(df_data.shape[-1]))
 
