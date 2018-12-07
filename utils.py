@@ -71,7 +71,7 @@ def get_RSN_act(x, rsn, threshold=0.5, zscore=True):
     df_rsn_act = pd.DataFrame(rsn_act)
     
     # threshold (?)
-    if threshold:
+    if threshold is not None:
         df_rsn_act = df_rsn_act.ge(0.5).astype(int)
     
     return df_rsn_act
