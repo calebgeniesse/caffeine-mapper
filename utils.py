@@ -37,6 +37,61 @@ from load_data import load_scrubbed, get_session_tmask, get_RSN_rmask
 ##############################################################################
 ### helper functions
 ##############################################################################
+def get_data_splits(data_, zscore=True, groupby='day_of_week', groups=None, **kwargs):
+    """ Return data splits.
+    
+    Inputs
+    ------
+        :data_ = Bunch,  merged sessions 
+        :groups = dict, {group: name} mapping of splits
+        
+    """
+    x_ = data_.X.copy()
+    
+    # z-score
+    if zscore is True:
+        x_ = scipy.stats.zscore(x_, axis=0)
+
+    # group by fed / fasted
+    grouped = data_.meta.groupby(groupby)
+    
+    # get splits    
+    splits = dict()
+    for g_i, (group, df_group) in enumerate(grouped):
+        
+        # extract data for fed / fasted
+        x_group = x_[df_group.index, :]
+
+        # extract RSNs data for fed / fasted
+        df_rsn_group = get_RSN_act(x_group, data_.rmask, density=0.05)
+        
+        # name split
+        try:
+            name = '{:s}_{:0.0f}'.format(groupby, g_i)   
+            name = groups.get(group) or groups.get(int(group)) or name
+        except Exception as e:
+            pass
+            
+        # save split
+        splits[name] = split = Bunch(
+            meta=df_group.copy(),
+            X=x_group.copy(),
+            RSN=df_rsn_group.copy(),
+            group=group,
+            name=name,
+            )
+    
+        # print shapes
+        print("{:15} => {:15}  x.shape: {}  RSN.shape: {}".format(
+            group, name, split.X.shape, split.RSN.shape
+        ))
+    
+    # return as Bunch
+    splits = Bunch(**splits)
+    return splits
+
+
+
 def get_RSN_act(x, rsn, zscore=True, density=None, threshold=0.5, binary=True):
     """ Compute mean activity for RSN at each TR.
     
@@ -60,14 +115,18 @@ def get_RSN_act(x, rsn, zscore=True, density=None, threshold=0.5, binary=True):
     # reset indices (i.e. if rmask was applied to data...)
     if rsn_.shape[0] > x_.shape[-1]:
         rsn_ = rsn_.reset_index(drop=True)
-    
+    elif rsn_.index.max() > x_.shape[-1]:
+        rsn_ = rsn_.reset_index(drop=True)
+
     # z-score (?)
     if zscore is True:
         x_ = scipy.stats.zscore(x_, axis=0)
 
     # get average RSN activity for each network
+    #       sorted by -len(ROIs), -sum(ROIs) 
     # TODO: this could be its own function
     rsn_rois = rsn_.groupby('network').indices.items()
+    rsn_rois = sorted(rsn_rois, key=lambda _: [-len(_[-1]), -sum(_[-1])])
     rsn_act = {rsn: x_[:, rois].mean(axis=1) for (rsn, rois) in rsn_rois}
 
     # save as DataFrame

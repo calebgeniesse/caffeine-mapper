@@ -78,6 +78,7 @@ def get_RSN_rmask(atlas, n=None, minor=False, ignore=['Zero', 'na'], **kwargs):
     rmask = rmask.assign(data_id = rmask.index)
     rmask = rmask.assign(rmask = rmask.network.isin(RSNs))
     rmask = rmask.loc[rmask.rmask, ['data_id', 'region', 'network', 'rmask']]
+    #rmask = rmask.assign(group = rmask.network.map(RSNs.index))
     return rmask
 
 
@@ -338,13 +339,13 @@ def load_scrubbed(**kwargs):
     dataset = Bunch(
         data=pd.concat((_.data for _ in dataset), ignore_index=True, sort=False).fillna(0.0),
         meta=pd.concat((_.meta for _ in dataset), ignore_index=False, sort=False),
-        tmask=pd.concat((_.tmask for _ in dataset)),
-        rmask=pd.concat((_.rmask for _ in dataset)),
+        tmask=pd.concat((_.tmask for _ in dataset), ignore_index=False, sort=False),
+        rmask=dataset[0].rmask,
         atlas=dataset[0].atlas,
         )
     dataset.meta = (clean_meta(dataset.meta, **kwargs)
                     .reset_index(drop=False)
-                    .set_index('session')
+                    #.set_index('session')
                     )
 
 
