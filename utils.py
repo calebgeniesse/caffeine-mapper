@@ -67,7 +67,7 @@ def get_data_splits(data_, zscore=True, groupby='day_of_week', groups=None, **kw
         
         # name split
         try:
-            name = '{:s}_{:0.0f}'.format(groupby, g_i)   
+            name = '{:}_{:}'.format(groupby, str(g_i).zfill(len(str(grouped.ngroups))))
             name = groups.get(group) or groups.get(int(group)) or name
         except Exception as e:
             pass
