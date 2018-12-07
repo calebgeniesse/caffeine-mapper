@@ -37,14 +37,17 @@ from load_data import load_scrubbed, get_session_tmask, get_RSN_rmask
 ##############################################################################
 ### helper functions
 ##############################################################################
-def get_RSN_act(x, rsn, threshold=0.5, zscore=True):
+def get_RSN_act(x, rsn, zscore=True, density=None, threshold=0.5, binary=True):
     """ Compute mean activity for RSN at each TR.
     
     Inputs
     ------
         :x = np.ndarray (TR, ROI)
-        
-        :rsn = (ROI, RSN)
+        :rsn = pd.DataFrame (ROI, RSN)
+        :zscore = bool, whether or not to zscore x
+        :density = float, set everything below 1-density to 0
+        :threshold = float, set everything above threshold to 1 (set density=1.0)
+        :binary = bool, whether or not to binarize results
         
     """
     x_ = x.copy() 
@@ -70,10 +73,19 @@ def get_RSN_act(x, rsn, threshold=0.5, zscore=True):
     # save as DataFrame
     df_rsn_act = pd.DataFrame(rsn_act)
     
+    # threshold / density (?)
+    if density is not None:
+        threshold = df_rsn_act.quantile(1.0-density, axis=0)
+        df_rsn_act[df_rsn_act.lt(threshold)] = 0
+
     # threshold (?)
-    if threshold is not None:
-        df_rsn_act = df_rsn_act.ge(0.5).astype(int)
-    
+    if threshold is None:
+        threshold = df_rsn_act.mean(axis=0)
+
+    # binary (?)
+    if binary is True:
+        df_rsn_act = (df_rsn_act >= threshold).astype(int)
+ 
     return df_rsn_act
 
 
