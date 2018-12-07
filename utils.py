@@ -7,9 +7,10 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 
+import dyneusr as ds
 import kmapper as km
 import networkx as nx
-import dyneusr as ds
+import bct
 
 import numpy as np
 import pandas as pd
@@ -31,7 +32,7 @@ from collections import Counter, OrderedDict
 from functools import partial
 from itertools import product
 
-from load_data import load_scrubbed, get_session_tmask, get_RSN_rmask
+from load_data import * #load_scrubbed, get_session_tmask, get_RSN_rmask
 
 
 ##############################################################################
