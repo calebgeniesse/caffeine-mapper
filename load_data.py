@@ -188,7 +188,7 @@ def clean_meta(df, columns=None, zscore=False, **kwargs):
     # z-score values
     if zscore is True:
         good_rows = df_clean.any(axis=1) & df_clean.std(axis=1).gt(0)
-        good_cols = df_clean.any(axis=0) & df_clean.std(axis=1).gt(0)
+        good_cols = df_clean.any(axis=0) & df_clean.std(axis=0).gt(0)
         df_nonzero = df_clean.loc[good_rows, good_cols]
         df_clean.loc[good_rows, good_cols] = scipy.stats.zscore(df_nonzero, axis=0)
     
