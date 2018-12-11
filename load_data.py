@@ -27,10 +27,11 @@ from sklearn.datasets.base import Bunch
 #from nilearn.datasets import fetch_atlas_msdl
 
 class config:
+    # walk back, until we find base directory
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    while len(base_dir) and not os.path.exists(os.path.join(base_dir, 'data')):
+        base_dir = os.path.dirname(base_dir)
     # define some paths
-    base_dir = os.path.dirname(os.path.dirname(
-            os.path.abspath(__file__)
-            ))
     data_dir = os.path.join(base_dir, 'data/myconnectome/base/')
     data_scrubbed_dir = os.path.join(data_dir, 'combined_data_scrubbed')
     data_tmask_dir = os.path.join(data_dir, 'rsfmri/tmasks')
