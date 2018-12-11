@@ -28,7 +28,10 @@ from sklearn.datasets.base import Bunch
 
 class config:
     # define some paths
-    data_dir = 'data/base/'
+    base_dir = os.path.dirname(os.path.dirname(
+            os.path.abspath(__file__)
+            ))
+    data_dir = os.path.join(base_dir, 'data/myconnectome/base/')
     data_scrubbed_dir = os.path.join(data_dir, 'combined_data_scrubbed')
     data_tmask_dir = os.path.join(data_dir, 'rsfmri/tmasks')
     data_behavior_dir = os.path.join(data_dir, 'behavior')

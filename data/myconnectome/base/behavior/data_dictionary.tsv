@@ -1,0 +1,125 @@
+VARIABLENAME	DESCRIPTION	UNITS
+subcode	Scan code	sub<XXX>
+date	Scan date	date
+afterscan:Anxietyduringscan	Anxiety during scan reported immediately after scan	1 (extremely good) - 7 (extremely bad)
+afterscan:diastolic	Diastolic blood pressure immediately after scan	mmHg
+afterscan:pulse	Pulse immediately after scan	beats per minute
+afterscan:systolic	Systolic blood pressure immediately after scan	mmHg
+blood:ba	CBC basophil count	10^3/uL
+blood:eo	CBC eosinophil count	10^3/uL
+blood:hgb	CBC hemoglobin	g/dL
+blood:ly	CBC lymphocyte count	10^3/uL
+blood:mch	CBC mean corpuscular hemoglobin	pg
+blood:mchc	CBC mean corpuscular hemoglobin concentration	g/dL
+blood:mcv	CBC mean corpuscular volume	fL
+blood:mo	CBC monocyte count	10^3/uL
+blood:mpv	CBC mean platelet volume	fL
+blood:ne	CBC neutrophil count	10^3/uL
+blood:plt	CBC platelet count	10^3/uL
+blood:rbc	CBC red blood cell count	10^6/uL
+blood:wbc	CBC white blood cell count	10^3/uL
+day_of_week	Day of week of scan	1 (Monday) - 5 (Friday)
+email:LIWC_CDI	LIWC Categorical-Dynamic Index	float
+email:LIWC_negemo	LIWC Negative Emotion	float
+email:LIWC_posemo	LIWC Positive Emotion	float
+morning:Pulse	Pulse immediately after waking	beats per minute
+morning:Sleepquality	Sleep quality rated immediately after waking	1 (extremely bad) - 7 (extremely good)
+morning:Soreness	Physical soreness measured immediately after waking	1 (extremely good) - 7 (extremely bad)
+morning:diastolic	Diastolic blood pressure immediately after waking	mmHg
+morning:systolic	Systolic blood pressure immediately after waking	mmHg
+panas:active	PANAS item (immediately after scan):  active	1 (very slightly/not at all) - 5 (extremely)
+panas:afraid	PANAS item (immediately after scan):  afraid	1 (very slightly/not at all) - 5 (extremely)
+panas:alert	PANAS item (immediately after scan):  alert	1 (very slightly/not at all) - 5 (extremely)
+panas:alone	PANAS item (immediately after scan):  alone	1 (very slightly/not at all) - 5 (extremely)
+panas:amazed	PANAS item (immediately after scan):  amazed	1 (very slightly/not at all) - 5 (extremely)
+panas:angry	PANAS item (immediately after scan):  angry	1 (very slightly/not at all) - 5 (extremely)
+panas:angry_at_self	PANAS item (immediately after scan):  angry_at_self	1 (very slightly/not at all) - 5 (extremely)
+panas:ashamed	PANAS item (immediately after scan):  ashamed	1 (very slightly/not at all) - 5 (extremely)
+panas:astonished	PANAS item (immediately after scan):  astonished	1 (very slightly/not at all) - 5 (extremely)
+panas:at_ease	PANAS item (immediately after scan):  at_ease	1 (very slightly/not at all) - 5 (extremely)
+panas:attentive	PANAS item (immediately after scan):  attentive	1 (very slightly/not at all) - 5 (extremely)
+panas:bashful	PANAS item (immediately after scan):  bashful	1 (very slightly/not at all) - 5 (extremely)
+panas:blameworthy	PANAS item (immediately after scan):  blameworthy	1 (very slightly/not at all) - 5 (extremely)
+panas:blue	PANAS item (immediately after scan):  blue	1 (very slightly/not at all) - 5 (extremely)
+panas:bold	PANAS item (immediately after scan):  bold	1 (very slightly/not at all) - 5 (extremely)
+panas:calm	PANAS item (immediately after scan):  calm	1 (very slightly/not at all) - 5 (extremely)
+panas:cheerful	PANAS item (immediately after scan):  cheerful	1 (very slightly/not at all) - 5 (extremely)
+panas:concentrating	PANAS item (immediately after scan):  concentrating	1 (very slightly/not at all) - 5 (extremely)
+panas:confident	PANAS item (immediately after scan):  confident	1 (very slightly/not at all) - 5 (extremely)
+panas:daring	PANAS item (immediately after scan):  daring	1 (very slightly/not at all) - 5 (extremely)
+panas:delighted	PANAS item (immediately after scan):  delighted	1 (very slightly/not at all) - 5 (extremely)
+panas:determined	PANAS item (immediately after scan):  determined	1 (very slightly/not at all) - 5 (extremely)
+panas:disgusted	PANAS item (immediately after scan):  disgusted	1 (very slightly/not at all) - 5 (extremely)
+panas:disgusted_with_self	PANAS item (immediately after scan):  disgusted_with_self	1 (very slightly/not at all) - 5 (extremely)
+panas:dissatisfied_with_self	PANAS item (immediately after scan):  dissatisfied_with_self	1 (very slightly/not at all) - 5 (extremely)
+panas:distressed	PANAS item (immediately after scan):  distressed	1 (very slightly/not at all) - 5 (extremely)
+panas:downhearted	PANAS item (immediately after scan):  downhearted	1 (very slightly/not at all) - 5 (extremely)
+panas:drowsy	PANAS item (immediately after scan):  drowsy	1 (very slightly/not at all) - 5 (extremely)
+panas:energetic	PANAS item (immediately after scan):  energetic	1 (very slightly/not at all) - 5 (extremely)
+panas:enthusiastic	PANAS item (immediately after scan):  enthusiastic	1 (very slightly/not at all) - 5 (extremely)
+panas:excited	PANAS item (immediately after scan):  excited	1 (very slightly/not at all) - 5 (extremely)
+panas:fatigue	PANAS derived score:  fatigue	integer
+panas:fearless	PANAS item (immediately after scan):  fearless	1 (very slightly/not at all) - 5 (extremely)
+panas:frightened	PANAS item (immediately after scan):  frightened	1 (very slightly/not at all) - 5 (extremely)
+panas:guilty	PANAS item (immediately after scan):  guilty	1 (very slightly/not at all) - 5 (extremely)
+panas:happy	PANAS item (immediately after scan):  happy	1 (very slightly/not at all) - 5 (extremely)
+panas:hostile	PANAS item (immediately after scan):  hostile	1 (very slightly/not at all) - 5 (extremely)
+panas:inspired	PANAS item (immediately after scan):  inspired	1 (very slightly/not at all) - 5 (extremely)
+panas:interested	PANAS item (immediately after scan):  interested	1 (very slightly/not at all) - 5 (extremely)
+panas:irritable	PANAS item (immediately after scan):  irritable	1 (very slightly/not at all) - 5 (extremely)
+panas:jittery	PANAS item (immediately after scan):  jittery	1 (very slightly/not at all) - 5 (extremely)
+panas:joyful	PANAS item (immediately after scan):  joyful	1 (very slightly/not at all) - 5 (extremely)
+panas:lively	PANAS item (immediately after scan):  lively	1 (very slightly/not at all) - 5 (extremely)
+panas:loathing	PANAS item (immediately after scan):  loathing	1 (very slightly/not at all) - 5 (extremely)
+panas:lonely	PANAS item (immediately after scan):  lonely	1 (very slightly/not at all) - 5 (extremely)
+panas:negative	PANAS derived score:  negative	integer
+panas:nervous	PANAS item (immediately after scan):  nervous	1 (very slightly/not at all) - 5 (extremely)
+panas:positive	PANAS derived score:  positive	integer
+panas:proud	PANAS item (immediately after scan):  proud	1 (very slightly/not at all) - 5 (extremely)
+panas:relaxed	PANAS item (immediately after scan):  relaxed	1 (very slightly/not at all) - 5 (extremely)
+panas:sad	PANAS item (immediately after scan):  sad	1 (very slightly/not at all) - 5 (extremely)
+panas:scared	PANAS item (immediately after scan):  scared	1 (very slightly/not at all) - 5 (extremely)
+panas:scornful	PANAS item (immediately after scan):  scornful	1 (very slightly/not at all) - 5 (extremely)
+panas:shaky	PANAS item (immediately after scan):  shaky	1 (very slightly/not at all) - 5 (extremely)
+panas:sheepish	PANAS item (immediately after scan):  sheepish	1 (very slightly/not at all) - 5 (extremely)
+panas:shy	PANAS item (immediately after scan):  shy	1 (very slightly/not at all) - 5 (extremely)
+panas:sleepy	PANAS item (immediately after scan):  sleepy	1 (very slightly/not at all) - 5 (extremely)
+panas:sluggish	PANAS item (immediately after scan):  sluggish	1 (very slightly/not at all) - 5 (extremely)
+panas:strong	PANAS item (immediately after scan):  strong	1 (very slightly/not at all) - 5 (extremely)
+panas:surprised	PANAS item (immediately after scan):  surprised	1 (very slightly/not at all) - 5 (extremely)
+panas:timid	PANAS item (immediately after scan):  timid	1 (very slightly/not at all) - 5 (extremely)
+panas:tired	PANAS item (immediately after scan):  tired	1 (very slightly/not at all) - 5 (extremely)
+panas:upset	PANAS item (immediately after scan):  upset	1 (very slightly/not at all) - 5 (extremely)
+prevevening:Alcohol	Alcohol consumed (standard drinks) reported previous evening	float
+prevevening:Guthealth	Gut health reported previous evening	1 (extremely bad) - 7 (extremely good)
+prevevening:Howmuchdidtinnitusbotheryoutoday?	How much did tinnitus bother you today reported previous evening	
+prevevening:Psoriasisseverity	Psoriasis severity reported previous evening	1 (extremely good) - 7 (extremely bad)
+prevevening:Stress	Psychological stress reported previous evening	1 (extremely good) - 7 (extremely bad)
+prevevening:Timespentoutdoors	Time spent outdoors reported previous evening	hours
+rna:rin	RNA integrity number	float
+sameevening:Alcohol	Alcohol consumed (standard drinks) reported same evening	float
+sameevening:Guthealth	Gut health reported same evening	1 (extremely bad) - 7 (extremely good)
+sameevening:Howmuchdidtinnitusbotheryoutoday?	How much did tinnitus bother you today reported same evening	
+sameevening:Psoriasisseverity	Psoriasis severity reported same evening	1 (extremely good) - 7 (extremely bad)
+sameevening:Stress	Psychological stress reported same evening	1 (extremely good) - 7 (extremely bad)
+sameevening:Timespentoutdoors	Time spent outdoors reported same evening	hours
+scan:has_breathhold	DEPRECATED	0 (absent)/1(present)
+scan:has_dots	DEPRECATED	0 (absent)/1(present)
+scan:has_dti	DEPRECATED	0 (absent)/1(present)
+scan:has_faceloc	DEPRECATED	0 (absent)/1(present)
+scan:has_grid	DEPRECATED	0 (absent)/1(present)
+scan:has_nback	DEPRECATED	0 (absent)/1(present)
+scan:has_resting	DEPRECATED	0 (absent)/1(present)
+scan:has_superloc	DEPRECATED	0 (absent)/1(present)
+scan:has_t1w	DEPRECATED	0 (absent)/1(present)
+scan:has_t2w	DEPRECATED	0 (absent)/1(present)
+scan:noisecancel	Noise cancellation status during scan	0 (absent)/1(present)
+weather:precip	Precipitation for same day	inches
+weather:temphi	High temperature for same day	degrees Farenheit
+weather:templo	Low temperature for same day	degrees Farenheit
+weight	Weight in pounds measured using Aria scale	pounds
+zeo:timeInDeep	ZEO time in deep sleep	minutes
+zeo:timeInLight	ZEO time in light sleep	minutes
+zeo:timeInRem	ZEO time in REM sleep	minutes
+zeo:totalZ	ZEO total sleeping time	minutes
+zeo:zq	ZEO ZQ score	integer
