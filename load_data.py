@@ -26,7 +26,7 @@ from sklearn.datasets.base import Bunch
 #from nilearn.signal import clean
 #from nilearn.datasets import fetch_atlas_msdl
 
-class config:
+class ResourceConfig(object):
     # walk back, until we find base directory
     base_dir = os.path.dirname(os.path.abspath(__file__))
     while len(base_dir) and not os.path.exists(os.path.join(base_dir, 'data')):
@@ -38,6 +38,8 @@ class config:
     data_behavior_dir = os.path.join(data_dir, 'behavior')
     data_parcel_dir = os.path.join(data_dir, 'parcellation')
 
+# init _config 
+_config = ResourceConfig()
 
 
 def fetch_data(**kwargs):
@@ -97,7 +99,7 @@ def get_session_tmask(meta, session=None, **kwargs):
     """
     def glob_tmask(subcode=None):
         subcode = 'sub???' if subcode is None else subcode.split('.txt')[0]
-        glob_str = os.path.join(config.data_tmask_dir, subcode + '.txt')
+        glob_str = os.path.join(_config.data_tmask_dir, subcode + '.txt')
         found = sorted(glob.glob(glob_str))
         return found
     
@@ -133,7 +135,7 @@ def load_atlas(atlas_file=None):
     """ Load parcellation / atlas data.
     """ 
     if atlas_file is None:
-        atlas_file = os.path.join(config.data_parcel_dir, "parcel_data.txt")
+        atlas_file = os.path.join(_config.data_parcel_dir, "parcel_data.txt")
     
     # load parcellation into DataFrame
     df_parcel = pd.read_table(atlas_file, header=None)
@@ -214,13 +216,15 @@ def load_scrubbed(**kwargs):
     logger = logging.getLogger(__name__)
     logger.info('load_scrubbed(**{})'.format(kwargs))
     
-    # file path (avmovie only, for now)
-    glob_str = os.path.join(config.data_scrubbed_dir, "sub???.txt")
+    # data paths
+    _config = ResourceConfig()
+
+    glob_str = os.path.join(_config.data_scrubbed_dir, "sub???.txt")
     data_paths = sorted(glob.glob(glob_str))
-    tmask_paths = [os.path.join(config.data_tmask_dir, os.path.basename(_)) for _ in data_paths]
+    tmask_paths = [os.path.join(_config.data_tmask_dir, os.path.basename(_)) for _ in data_paths]
 
     glob_str = os.path.join(
-        config.data_behavior_dir, 'trackingdata_goodscans.txt')
+        _config.data_behavior_dir, 'trackingdata_goodscans.txt')
     meta_paths = sorted(glob.glob(glob_str))
 
     # hacky, but just print command to fetch data, if not already
