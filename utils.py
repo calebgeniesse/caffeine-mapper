@@ -100,7 +100,7 @@ def get_data_splits(data_, zscore=True, groupby='day_of_week', groups=None, **kw
 
 
 
-def get_RSN_act(x, rsn, zscore=True, density=None, threshold=0.05, binary=True):
+def get_RSN_act(x, rsn, zscore=True, density=None, threshold=0.5, binary=True):
     """ Compute mean activity for RSN at each TR.
     
     Inputs
@@ -216,8 +216,7 @@ def run_mapper(X=None, y=None, X_inverse=True, lens=None, verbose=0, **params):
     graph = mapper.map(lens, X_inverse, clusterer=clusterer, coverer=cover)
   
     # dG
-    dG = ds.DyNeuGraph()
-    dG.fit(graph, y=y)
+    dG = ds.DyNeuGraph(G=graph, y=y)
     
     # save results
     results = Bunch(
